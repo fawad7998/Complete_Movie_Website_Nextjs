@@ -3,9 +3,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useEffect, useState } from 'react'
 
-function Resume() {
+function MovieSite() {
     const [data, setData] = useState([]);
-    const [movie, setMovie] = useState("dragon ball super");
+    const [movie, setMovie] = useState("Movies");
     const [failed, setFailed] = useState("");
     const [page, setPage] = useState(1);
     const [loading, setLoading] = useState(false);
@@ -85,9 +85,9 @@ function Resume() {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {data.map((movie, key) => (
-                        <Link href={`./resume/${movie.id}`} key={key}>
+                        <Link href={`./moviesite/${movie.id}`} key={key}>
                             <div className="bg-gray-800 p-4 rounded-lg shadow-md">
-                                <h1 className="text-xl font-semibold mb-2"><strong className='text-green-600'>Name:</strong>{movie.original_title}</h1>
+                                <h1 className="text-xl font-semibold mb-2"><strong className='text-green-600'>Name:</strong>{movie.title}</h1>
                                 <p className="text-sm mb-4"><strong className='text-green-600'>StoryLine:</strong> <br />{movie.overview.slice(0,200) }....</p>
                                 {
                                     !movie.poster_path ? (
@@ -131,7 +131,7 @@ function Resume() {
     )
 }
 
-export default Resume;
+export default MovieSite;
 
 
 

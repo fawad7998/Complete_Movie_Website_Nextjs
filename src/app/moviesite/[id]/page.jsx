@@ -1,12 +1,17 @@
 "use client"
 import { useEffect, useState } from 'react';
 import Image from 'next/image';
-import { useParams } from 'next/navigation';
+import { useParams, useSearchParams } from 'next/navigation';
+import BackButton from '../button/page';
 
 export default function MovieDetails() {
     const [movie, setMovie] = useState(null);
+    const [show, setShow] = useState(false);
     const params = useParams();
+    const searchParams = useSearchParams();
+    console.log(params)
     const { id } = params;
+    const returnUrl = searchParams.get('returnUrl') || '/';
 
     useEffect(() => {
         const fetchMovieDetails = async () => {
@@ -26,11 +31,20 @@ export default function MovieDetails() {
         return <div className="text-center">Loading...</div>;
     }
 
+
+
+    const handleshow = () => {
+        setShow(!show);
+    }
+
+
     return (
         <>
-        
-        <div className="bg-gray-900 text-white  p-8">
-            <div className="max-w-6xl mx-auto ">
+        <div className="bg-gray-900 text-white p-8">
+                <div className="max-w-7xl mx-auto ">
+                    <BackButton returnUrl={returnUrl} />
+                    <br />
+                    <br />
                 <h1 className="text-4xl font-bold mb-6">{movie.title}</h1>
                 <div className="flex flex-col lg:flex-row gap-12">
                     <div className="lg:w-1/3">
@@ -87,47 +101,23 @@ export default function MovieDetails() {
                                     </div>
                                 ))}
                             </div>
-                        </div>
-                        {movie.credits && (
-                            <div className="mb-6">
-                                <h2 className="text-2xl font-semibold mb-2">Top Cast</h2>
-                                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                                    {movie.credits.cast.map(actor => (
-                                        <div key={actor.id} className="text-center">
-                                            {!actor.profile_path ? (
-                                                <Image
-                                                    src="/user.jpg"
-                                                    width={100}
-                                                    height={150}
-                                                    alt={actor.name}
-                                                    className="rounded-lg mx-auto mb-2"
-                                                />
-                                            ) : (
-                                                
-                                                <Image
-                                                    src={`https://image.tmdb.org/t/p/w200${actor.profile_path}`}
-                                                    width={100}
-                                                    height={150}
-                                                    alt={actor.name}
-                                                    className="rounded-lg mx-auto mb-2"
-                                                />
-                                            ) }
-                                            <p className="font-semibold">{actor.name}</p>
-                                            <p className="text-sm text-gray-400">{actor.character}</p>
-                                        </div>
-                                    ))}
-                                </div>
                             </div>
-                        )}
+                    </div>
+                    </div>
+                    {/*  */}
+                    <br />
+                    <br />
+            <div className='grid grid-cols-12 gap-2 '>
+                        <div className='col-span-12 lg:col-span-6 sm:col-span-12 md:col-span-12 w-full'>
                         {movie.videos && movie.videos.results.length > 0 ?  (
                             <div>
                                 <h2 className="text-2xl font-semibold mb-2">Trailer</h2>
-                                    <div className="aspect-w-16 aspect-h-9">
+                                    <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
                                         <iframe
                                             src={`https://www.youtube.com/embed/${movie.videos.results[0].key}`}
                                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                                             allowFullScreen
-                                            className="w-full h-full rounded-lg"
+                                            className="absolute top-0 left-0 w-full h-full rounded-lg"
                                         ></iframe>
                                     </div>
                             </div>
@@ -141,11 +131,53 @@ export default function MovieDetails() {
                                     No Trailer Found
                                 </div>
                                 </center>
-                        )}
-                    </div>
-                </div>
+                                )}
+                        </div>
+                        {/*  */}
+                        <div className='col-span-12 lg:col-span-6 sm:col-span-12 md:col-span-12 w-full'>
+
+                                {movie.credits && (
+                                    <div className="mb-6">
+    <h2 className="text-2xl font-semibold mb-2">Top Cast</h2>
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
+        {(show ? movie.credits.cast : movie.credits.cast.slice(0, 8)).map(actor => (
+            <div key={actor.id} className="text-center">
+                {!actor.profile_path ? (
+                    <Image
+                        src="/user.jpg"
+                        width={100}
+                        height={150}
+                        alt={actor.name}
+                        className="rounded-lg mx-auto mb-2"
+                    />
+                ) : (
+                    <Image
+                        src={`https://image.tmdb.org/t/p/w200${actor.profile_path}`}
+                        width={100}
+                        height={150}
+                        alt={actor.name}
+                        className="rounded-lg mx-auto mb-2"
+                    />
+                )}
+                <p className="font-semibold">{actor.name}</p>
+                <p className="text-sm text-gray-400 mb-4">{actor.character}</p>
+            </div>
+        ))}
+    </div>
+    <button 
+        onClick={handleshow} 
+        className="mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
+    >
+        {show ? "Show Less" : "Show All Actors"}
+    </button>
+</div>
+
+                                )}
+                        </div>
+                     </div>
             </div>
             </div>
             </>
     );
 }
+
